@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -7,12 +7,31 @@ import {
   Image, 
   TouchableOpacity, 
   SafeAreaView, 
-  Switch 
+  Switch,
+  Alert,
+  Modal
 } from 'react-native';
 import { Feather, MaterialCommunityIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 
-const ProfileScreen = () => {
-  const [isDark, setIsDark] = React.useState(false);
+const ProfileScreen = ({ onNavigate }) => {
+  const [isDark, setIsDark] = useState(false);
+  const [aboutVisible, setAboutVisible] = useState(false);
+
+  // --- LOGOUT LOGIC ---
+  const handleLogout = () => {
+    Alert.alert(
+      "Log Out",
+      "Are you sure you want to log out of CareCell?",
+      [
+        { text: "No", style: "cancel" },
+        { 
+          text: "Yes", 
+          onPress: () => onNavigate('signin'), // Ensure 'signin' matches your navigation state key
+          style: "destructive" 
+        }
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -20,10 +39,12 @@ const ProfileScreen = () => {
         
         {/* Profile Header Card */}
         <View style={styles.profileHeaderCard}>
-          <Image 
-            source={{ uri: 'https://via.placeholder.com/100' }} // Placeholder for User
-            style={styles.profileAvatar} 
-          />
+          <View style={styles.avatarContainer}>
+             <Image 
+               source={require('../assets/icon/pic.png')} // Restored consistent avatar from HomeScreen
+               style={styles.profileAvatar} 
+             />
+          </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>Owoade Opeyemi</Text>
             <Text style={styles.profileRole}>Parent/Guardian Account</Text>
@@ -78,11 +99,18 @@ const ProfileScreen = () => {
             <Switch value={isDark} onValueChange={setIsDark} />
           </View>
           <Divider />
-          <MenuRow icon="info" label="About CareCell" type="feather" isLast />
+          {/* About CareCell Row */}
+          <TouchableOpacity style={styles.row} onPress={() => setAboutVisible(true)}>
+            <View style={[styles.iconBox, {backgroundColor: '#F3F4F6'}]}>
+              <Feather name="info" size={18} color="#4B5563" />
+            </View>
+            <Text style={styles.rowLabel}>About CareCell</Text>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </TouchableOpacity>
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutBtn}>
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
           <Feather name="log-out" size={20} color="#B22222" />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
@@ -90,15 +118,44 @@ const ProfileScreen = () => {
         <Text style={styles.footerBrand}>Your Data is Secure</Text>
         <Text style={styles.footerDetail}>Health data is encrypted end-to-end.</Text>
 
-        <View style={{ height: 100 }} />
+        <View style={{ height: 30 }} />
       </ScrollView>
+
+      {/* --- ABOUT CARECELL MODAL --- */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={aboutVisible}
+        onRequestClose={() => setAboutVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.aboutModal}>
+            <View style={styles.aboutHeader}>
+                <Ionicons name="shield-checkmark" size={40} color="#B22222" />
+                <Text style={styles.aboutTitle}>CareCell</Text>
+                <Text style={styles.versionTag}>Demo Version 1.0</Text>
+            </View>
+            <Text style={styles.aboutText}>
+              CareCell is a specialized health companion designed to empower individuals living with Sickle Cell Disease. 
+              {"\n\n"}
+              This application is currently a <Text style={{fontFamily: 'Brand-Bold'}}>Demo Version</Text> created for research and development purposes. It will be updated with more advanced predictive features and genomic insights soon.
+            </Text>
+            <TouchableOpacity 
+              style={styles.closeAboutBtn} 
+              onPress={() => setAboutVisible(false)}
+            >
+              <Text style={styles.closeAboutBtnText}>Got it</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
 
 // --- Sub-Components ---
-const MenuRow = ({ icon, label, type, isLast }) => (
-  <TouchableOpacity style={styles.row}>
+const MenuRow = ({ icon, label, type, isLast, onPress }) => (
+  <TouchableOpacity style={styles.row} onPress={onPress}>
     <View style={[styles.iconBox, {backgroundColor: '#F3F4F6'}]}>
       {type === 'fa5' ? <FontAwesome5 name={icon} size={16} color="#4B5563" /> : <Feather name={icon} size={18} color="#4B5563" />}
     </View>
@@ -117,7 +174,7 @@ const DetailRow = ({ icon, label, value, subValue, color, isLast }) => (
       <Text style={styles.detailValue}>{value}</Text>
       {subValue && <Text style={styles.detailSubValue}>{subValue}</Text>}
     </View>
-  </View> // <--- Changed from </TouchableOpacity> to </View>
+  </View>
 );
 
 const ToggleRow = ({ icon, label, sub, color, initialValue }) => {
@@ -143,7 +200,8 @@ const styles = StyleSheet.create({
   scrollContent: { padding: 20 },
   
   profileHeaderCard: { backgroundColor: '#B22222', borderRadius: 24, padding: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 25 },
-  profileAvatar: { width: 70, height: 70, borderRadius: 35, borderWidth: 3, borderColor: 'rgba(255,255,255,0.3)' },
+  avatarContainer: { backgroundColor: 'rgba(255,255,255,0.2)', padding: 4, borderRadius: 40 },
+  profileAvatar: { width: 70, height: 70, borderRadius: 35 },
   profileInfo: { marginLeft: 15 },
   profileName: { color: '#FFF', fontSize: 18, fontFamily: 'Brand-Bold' },
   profileRole: { color: 'rgba(255,255,255,0.8)', fontSize: 12, marginBottom: 8 },
@@ -165,7 +223,17 @@ const styles = StyleSheet.create({
   logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FEE2E2', padding: 18, borderRadius: 16, marginTop: 10 },
   logoutText: { color: '#B22222', fontFamily: 'Brand-Bold', marginLeft: 10 },
   footerBrand: { textAlign: 'center', color: '#1F2937', fontFamily: 'Brand-Bold', marginTop: 30 },
-  footerDetail: { textAlign: 'center', color: '#9CA3AF', fontSize: 12, marginBottom: 10 }
+  footerDetail: { textAlign: 'center', color: '#9CA3AF', fontSize: 12, marginBottom: 10 },
+
+  // Modal Styles
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
+  aboutModal: { backgroundColor: '#FFF', borderRadius: 25, padding: 25, width: '100%', alignItems: 'center' },
+  aboutHeader: { alignItems: 'center', marginBottom: 20 },
+  aboutTitle: { fontSize: 22, fontFamily: 'Brand-Bold', color: '#4B3F3F', marginTop: 10 },
+  versionTag: { fontSize: 12, color: '#B22222', fontFamily: 'Brand-Medium' },
+  aboutText: { fontSize: 14, color: '#6B5E5E', textAlign: 'center', lineHeight: 22, marginBottom: 25 },
+  closeAboutBtn: { backgroundColor: '#B22222', paddingVertical: 12, paddingHorizontal: 40, borderRadius: 12 },
+  closeAboutBtnText: { color: '#FFF', fontFamily: 'Brand-Bold', fontSize: 16 }
 });
 
 export default ProfileScreen;

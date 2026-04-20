@@ -9,11 +9,13 @@ const patientRoutes = require("./api/routes/patients");
 const triageRoutes = require("./api/routes/triage");
 const matchmakingRoutes = require("./api/routes/matchmaking");
 const analyticsRoutes = require("./api/routes/analytics");
+const rammRoutes = require("./api/routes/ramm");
 
 app.use("/api/patients", patientRoutes);
 app.use("/api/triage", triageRoutes);
 app.use("/api/matchmaking", matchmakingRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/ramm", rammRoutes);
 
 
 // Health check
