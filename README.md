@@ -1,153 +1,97 @@
-🩸 CareCell: Precision Sickle Cell Monitoring & Intervention
 
-CareCell is a specialized digital health ecosystem designed to support Sickle Cell Disease (SCD) patients through proactive monitoring. By integrating Respiratory Acoustic Monitoring (RAMM) with clinical HLA matchmaking, CareCell shifts the paradigm from reactive treatment to predictive crisis prevention.
+---
 
-🏛️ System Architecture
+## **Backend Modules**
 
-The project is divided into two primary environments working in tandem:
+### **1. Patient Enrollment (`patients.js`)**
 
-CareCell Mobile (Frontend): A React Native application for real-time patient logging, wearable data visualization, and emergency triage.
+- Clinician-verified enrollment into **NSCDIR**.  
+- Records **patient demographics**, **lab-verified genotype**, and **baseline CBC**.  
+- Creates immutable **family donor pool** using `Donor.js`.  
+- Enforces **append-only, read-only policies** for clinical integrity.  
 
-CareCell Engine (Backend): A Node.js environment handling the complex logic for genetic matching, acoustic signal processing (DSP), and FHIR data standards.
+---
 
-💻 Backend Modules & Logic
+### **2. HLA Matcher (`hlaMatcher.js` & `matchmaking.js`)**
 
-The backend is built with modularity at its core, ensuring clinical integrity and deterministic outputs.
+- Evaluates the **probability of a genetically matched donor** in the family.  
+- High potential triggers automated **BMT referral package** creation.  
+- Deterministic, **risk-free computation** using only lab-verified donor genotypes.  
 
-Module
+---
 
-Component
+### **3. RAMM & Triage (`rammEngine.js` & `triage.js`)**
 
-Technical Role
+- **Respiratory Acoustic Monitoring Module (RAMM)** uses simple DSP logic to detect elevated respiratory rates.  
+- **Triage route** collects daily logs and generates **ACS alerts** when thresholds are exceeded.  
+- Ensures **real-time crisis prevention**.  
 
-Status
+---
 
-Patient Enrollment
+### **4. Analytics & Wearables (`analytics.js`)**
 
-patients.js
+- Computes trends from **daily logs** and **wearable summaries**.  
+- Provides **average respiratory rates**, **alerts triggered**, and **heart rate metrics**.  
+- Supports **clinical decision-making** for caregivers and clinicians.  
 
-Verification of lab-verified genotype and baseline CBC.
+---
 
-✅ Functional
+### **5. FHIR Export (`fhirConverter.js`)**
 
-HLA Matcher
+- Converts internal patient records into **FHIR-compatible bundles**.  
+- Includes **Patient resources** and **CBC Observations**.  
+- Enables **secure hospital integration** without direct login.  
 
-hlaMatcher.js
+---
 
-Evaluates genetic donor probability within family pools.
+### **6. Clinician Authentication (`auth.js`)**
 
-✅ Functional
+- Simple stub requiring `x-clinician-id` header.  
+- Attaches `clinicianId` to request object for downstream verification.  
+- Applied across **enrollment, triage, and matchmaking routes**.  
 
-RAMM Engine
+---
 
-rammEngine.js
+### **7. Central In-Memory Store (`store.js`)**
 
-Respiratory Acoustic Monitoring logic for ACS detection.
+- Single source of truth for **patients** and **donors**.  
+- Prevents **duplicate or inconsistent data** across routes.  
+- Fully replaceable with a persistent database later.  
 
-✅ Functional
+---
 
-Triage System
+## **Automated Tests (`/tests`)**
 
-triage.js
+- Validates **patient enrollment**, **donor immutability**, **HLA matching**, and **RAMM alerts**.  
+- Uses **Jest** for lightweight, reproducible testing.  
+- Ensures **backend stability** for hackathon demonstrations and further development.  
 
-Routes daily logs and generates alerts when thresholds exceed.
+---
 
-✅ Functional
+## **Key Technical Principles**
 
-FHIR Export
+- **Immutable clinical records**: No edits or deletions in donors or patient history.  
+- **Deterministic algorithms**: RAMM, HLA matching, and analytics produce reproducible results.  
+- **Modular architecture**: Services and routes are isolated, making it easy to replace or scale.  
+- **Clinician-first security**: Stub auth enforces verified access while keeping families in control.  
+- **FHIR compliance**: Structured output for hospitals and EMRs.  
 
-fhirConverter.js
+---
 
-Converts internal data to HL7 FHIR for hospital interop.
+## **Next Steps / Future Enhancements**
 
-✅ Functional
+1. **Integrate real DSP from wearable microphones** for RAMM.  
+2. **Replace central store with database** (SQLite / PostgreSQL).  
+3. **Extend analytics** with predictive AI models for crisis anticipation.  
+4. **Full OAuth / JWT clinician authentication**.  
+5. **Complete FHIR coverage** for all lab and triage data.  
+6. **End-to-end automated workflow demonstration** for hackathon or production-ready demo.  
 
-Analytics
+---
 
-analytics.js
+## **Getting Started**
 
-Computes trends from wearable heart rate and breath data.
-
-✅ Functional
-
-Clinical Auth
-
-auth.js
-
-Stub authentication requiring x-clinician-id verification.
-
-🟡 Demo Stub
-
-📱 React Native Frontend Implementation
-
-The frontend is designed for high-stress scenarios (Crisis) and long-term health tracking (Wellness).
-
-Key Features
-
-Vitals Dashboard: Real-time feedback loop displaying data processed by the RAMM engine.
-
-Crisis Triage Interface: A simplified, high-contrast UI allowing patients to report pain levels and symptoms in seconds.
-
-Donor Visualization: A visual representation of the family donor pool and the likelihood of successful Bone Marrow Transplant (BMT) matches.
-
-Secure Clinician View: A specialized UI for doctors to review verified lab data and historical triage trends.
-
-🔬 Core Technical Principles
-
-To maintain medical-grade reliability, the system follows four "Golden Rules":
-
-Clinical Immutability: Patient demographics, donor genotypes, and history are append-only. Records cannot be edited to ensure clinical audit trails.
-
-Deterministic Computation: Algorithms for HLA matching and RAMM thresholds produce consistent results across all environments.
-
-FHIR Compliance: All output destined for external hospital systems follows the HL7 FHIR Bundle structure for seamless EMR integration.
-
-Acoustic-First Triage: Prioritizes respiratory frequency (detected via RAMM) over subjective pain reporting to catch Acute Chest Syndrome (ACS) early.
-
-🧪 Testing & Stability
-
-Reliability is non-negotiable. Our test suite (powered by Jest) covers:
-
-Genetic Logic: Validating match probability calculations.
-
-Triage Alerts: Ensuring RAMM logic triggers alerts at the exact respiratory thresholds.
-
-Data Integrity: Confirming that the central store prevents duplicate patient entries.
-
-🗺️ Roadmap to Production
-
-The current build is a fully functional demo. The following steps will bridge the gap to clinical trials:
-
-[ ] Real-time DSP: Integration with physical wearable microphones for live acoustic analysis.
-
-[ ] Persistence Layer: Transition from store.js (In-memory) to a secure PostgreSQL database.
-
-[ ] Predictive AI: Implementing deep learning models to predict crises before thresholds are reached.
-
-[ ] OAuth2 Integration: Full JWT-based security for patients and clinicians.
-
-🛠️ Installation & Setup
-
-Backend Engine
-
-git clone [https://github.com/david-iwuoha-dev/carecell-backend](https://github.com/david-iwuoha-dev/carecell-backend)
+1. Clone repository:
+```bash
+git clone < https://github.com/david-iwuoha-dev/carecell >
 cd carecell-backend
-npm install
-npm test # Run clinical logic tests
-npm start # Launch demo server
-
-
-Mobile App
-
-cd carecell-mobile
-npm install
-npx react-native run-android # or run-ios
-
-
-Lead Developer: Iwuoha David
-
-University: University of Lagos
-
-Collaboration: AI-Assisted Clinical Interface Design
-
-Demo Build Completed: February 2026
