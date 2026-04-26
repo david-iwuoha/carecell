@@ -1,97 +1,148 @@
+<div align="center">
+
+```text
+ ██████╗ █████╗ ██████╗ ███████╗ ██████╗███████╗██╗     ██╗     
+██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝██║     ██║     
+██║     ███████║██████╔╝█████╗  ██║     █████╗  ██║     ██║     
+██║     ██╔══██║██╔══██╗██╔══╝  ██║     ██╔══╝  ██║     ██║     
+╚██████╗██║  ██║██║  ██║███████╗╚██████╗███████╗███████╗███████╗
+ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝ ╚═════╝╚══════╝╚══════╝╚══════╝
+```
+
+## CareCell
+
+> CareCell is a dual-platform medical ecosystem designed to bridge the gap between Sickle Cell Disease (SCD) patients and clinical intervention.
+
+![React Native](https://img.shields.io/badge/React%20Native-Mobile-61DAFB?style=for-the-badge)
+![Node.js](https://img.shields.io/badge/Node.js-Backend-339933?style=for-the-badge)
+![FHIR](https://img.shields.io/badge/HL7-FHIR-FF6B35?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Active-16A34A?style=for-the-badge)
+![License](https://img.shields.io/badge/License-Private-111827?style=for-the-badge)
+
+</div>
 
 ---
 
-## **Backend Modules**
+## 🚑 The Problem It Solves
 
-### **1. Patient Enrollment (`patients.js`)**
-
-- Clinician-verified enrollment into **NSCDIR**.  
-- Records **patient demographics**, **lab-verified genotype**, and **baseline CBC**.  
-- Creates immutable **family donor pool** using `Donor.js`.  
-- Enforces **append-only, read-only policies** for clinical integrity.  
+Sickle cell patients often face life-threatening complications like Acute Chest Syndrome (ACS) that develop rapidly and silently. Traditional monitoring is reactive, often catching crises only after they become emergencies. CareCell changes that model through continuous Respiratory Acoustic Monitoring and Genetic Matchmaking to create earlier interventions and faster clinical pathways.
 
 ---
 
-### **2. HLA Matcher (`hlaMatcher.js` & `matchmaking.js`)**
+## ⚙️ How It Works
 
-- Evaluates the **probability of a genetically matched donor** in the family.  
-- High potential triggers automated **BMT referral package** creation.  
-- Deterministic, **risk-free computation** using only lab-verified donor genotypes.  
-
----
-
-### **3. RAMM & Triage (`rammEngine.js` & `triage.js`)**
-
-- **Respiratory Acoustic Monitoring Module (RAMM)** uses simple DSP logic to detect elevated respiratory rates.  
-- **Triage route** collects daily logs and generates **ACS alerts** when thresholds are exceeded.  
-- Ensures **real-time crisis prevention**.  
+| Step | Process                                                                             | Outcome                                   |
+| ---- | ----------------------------------------------------------------------------------- | ----------------------------------------- |
+| 1    | **Continuous Monitoring** via RAMM module connected to wearable microphones/sensors | Overnight respiratory tracking            |
+| 2    | **Autonomous Triage** using DSP logic for respiratory frequency and depth           | Automated ACS risk alerts                 |
+| 3    | **Clinical Intervention** through FHIR-compatible bundles                           | Structured referrals and emergency action |
 
 ---
 
-### **4. Analytics & Wearables (`analytics.js`)**
+## 🧠 Tech Stack
 
-- Computes trends from **daily logs** and **wearable summaries**.  
-- Provides **average respiratory rates**, **alerts triggered**, and **heart rate metrics**.  
-- Supports **clinical decision-making** for caregivers and clinicians.  
-
----
-
-### **5. FHIR Export (`fhirConverter.js`)**
-
-- Converts internal patient records into **FHIR-compatible bundles**.  
-- Includes **Patient resources** and **CBC Observations**.  
-- Enables **secure hospital integration** without direct login.  
+| Technology                | Role in Project                                                                |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| React Native              | Cross-platform mobile application for patient logging and vitals visualization |
+| Node.js / Express         | Core engine for DSP logic, genetic matchmaking, and routing                    |
+| Tailwind CSS (NativeWind) | Accessible high-contrast mobile UI                                             |
+| Jest                      | Deterministic testing for HLA matching logic                                   |
+| HL7 FHIR Standards        | Interoperability with hospital EMR systems                                     |
 
 ---
 
-### **6. Clinician Authentication (`auth.js`)**
+## ✨ Key Features
 
-- Simple stub requiring `x-clinician-id` header.  
-- Attaches `clinicianId` to request object for downstream verification.  
-- Applied across **enrollment, triage, and matchmaking routes**.  
-
----
-
-### **7. Central In-Memory Store (`store.js`)**
-
-- Single source of truth for **patients** and **donors**.  
-- Prevents **duplicate or inconsistent data** across routes.  
-- Fully replaceable with a persistent database later.  
+| Feature                        | Description                                            |
+| ------------------------------ | ------------------------------------------------------ |
+| 📊 Real-Time Vitals Dashboard  | Visualizes heart rate and respiratory trends           |
+| 🔊 RAMM Engine                 | Uses acoustic DSP to detect elevated respiratory rates |
+| 🧬 Deterministic HLA Matcher   | Calculates donor match probability within family pools |
+| 🚨 Automated Triage Alerts     | Instant alerts when thresholds are breached            |
+| 🏥 FHIR Bundle Exporter        | Secure hospital-ready structured data export           |
+| 🛡️ Immutable Clinical Records | Append-only records for demographics and genotypes     |
 
 ---
 
-## **Automated Tests (`/tests`)**
+## 🚀 How To Run Locally
 
-- Validates **patient enrollment**, **donor immutability**, **HLA matching**, and **RAMM alerts**.  
-- Uses **Jest** for lightweight, reproducible testing.  
-- Ensures **backend stability** for hackathon demonstrations and further development.  
+### Backend
 
----
-
-## **Key Technical Principles**
-
-- **Immutable clinical records**: No edits or deletions in donors or patient history.  
-- **Deterministic algorithms**: RAMM, HLA matching, and analytics produce reproducible results.  
-- **Modular architecture**: Services and routes are isolated, making it easy to replace or scale.  
-- **Clinician-first security**: Stub auth enforces verified access while keeping families in control.  
-- **FHIR compliance**: Structured output for hospitals and EMRs.  
-
----
-
-## **Next Steps / Future Enhancements**
-
-1. **Integrate real DSP from wearable microphones** for RAMM.  
-2. **Replace central store with database** (SQLite / PostgreSQL).  
-3. **Extend analytics** with predictive AI models for crisis anticipation.  
-4. **Full OAuth / JWT clinician authentication**.  
-5. **Complete FHIR coverage** for all lab and triage data.  
-6. **End-to-end automated workflow demonstration** for hackathon or production-ready demo.  
-
----
-
-## **Getting Started**
-
-1. Clone repository:
 ```bash
-git clone < https://github.com/david-iwuoha-dev/carecell >
 cd carecell-backend
+npm install
+npm test
+npm start
+```
+
+### Frontend
+
+```bash
+cd carecell-mobile
+npm install
+npx react-native run-android
+# or
+npx react-native run-ios
+```
+
+> Backend default: `http://localhost:3000`
+
+---
+
+## 📁 File Structure
+
+```bash
+CareCell/
+├── carecell-mobile/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── screens/
+│   │   └── utils/
+├── carecell-backend/
+│   ├── routes/
+│   ├── services/
+│   │   ├── rammEngine.js
+│   │   ├── hlaMatcher.js
+│   │   └── fhirConverter.js
+│   ├── store.js
+│   └── tests/
+└── README.md
+```
+
+---
+
+## 📊 Roadmap
+
+### Completed
+
+* [x] Core RAMM respiratory threshold detection
+* [x] Deterministic HLA matchmaking engine
+* [x] React Native dashboard and triage screens
+* [x] Basic FHIR Patient + Observation conversion
+
+### Coming Next
+
+* [ ] PostgreSQL persistent storage migration
+* [ ] Live wearable microphone sync
+* [ ] Predictive AI crisis anticipation models
+
+---
+
+## 🏥 Built For
+
+A specialized medical demo build for researchers and clinicians. Completed February 2026.
+
+---
+
+## 👥 Team
+
+| Role   | Details                                                     |
+| ------ | ----------------------------------------------------------- |
+| Author | Iwuoha David                                                |
+| Team   | Six researchers and biologists from the University of Lagos |
+
+---
+
+## 📌 Final Note
+
+> CareCell focuses on moving sickle cell care from reactive emergency response to proactive early intervention.
