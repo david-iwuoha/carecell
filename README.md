@@ -25,7 +25,7 @@
 
 ## 🚑 The Problem It Solves
 
-Sickle cell patients often face life-threatening complications like Acute Chest Syndrome (ACS) that develop rapidly and silently. Traditional monitoring is reactive, often catching crises only after they become emergencies. CareCell changes that model through continuous Respiratory Acoustic Monitoring and Genetic Matchmaking to create earlier interventions and faster clinical pathways.
+Sickle cell patients often face life-threatening complications like Acute Chest Syndrome (ACS) that develop rapidly and silently. Traditional monitoring is reactive, often catching crises only after they become emergencies. CareCell changes that model through continuous Respiratory Acoustic Monitoring and Genetic Matchmaking to create earlier interventions and faster clinical pathways
 
 ---
 
