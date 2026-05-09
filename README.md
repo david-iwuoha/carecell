@@ -9,7 +9,7 @@
  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝ ╚═════╝╚══════╝╚══════╝╚══════╝
 ```
 
-## CareCell
+## Carecell
 
 > CareCell is a dual-platform medical ecosystem designed to bridge the gap between Sickle Cell Disease (SCD) patients and clinical intervention.
 
